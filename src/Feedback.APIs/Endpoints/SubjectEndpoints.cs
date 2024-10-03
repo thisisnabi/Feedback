@@ -1,6 +1,7 @@
 ﻿using Feedback.APIs.Endpoints.Contracts;
 using Feedback.APIs.Models.Domain;
 using Feedback.APIs.Persistence;
+using Feedback.APIs.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,7 @@ public static class SubjectEndpoints
         group.MapGet("/{id}/review/", GetAllReviews);
     }
      
-    public static async Task<Results<ValidationProblem,Created>> CreateSubject(FeedbackDbContext dbContext,
+    public static async Task<Results<ValidationProblem,Created>> CreateSubject(SubjectService service,
             IValidator<CreateSubjectRequest> Validator,
             IUserPrincipal userPrincipal,
             IConfiguration configuration,
@@ -36,74 +37,52 @@ public static class SubjectEndpoints
             return TypedResults.ValidationProblem(validate.ToDictionary());
         }
 
-        var subject = Subject.Create(request.Title, userPrincipal.TenantId, request.ExpirationOn);
-        dbContext.Subjects.Add(subject);
-        await dbContext.SaveChangesAsync();
-
-        var longUrl = $"{configuration["BaseUrl"]}/subject/{subject.Id}/ckeck";
+        var subjecId = await service.Create(request.Title, userPrincipal.TenantId, request.ExpirationOn);
+        var longUrl = $"{configuration["BaseUrl"]}/subject/{subjecId}/ckeck";
         // shortener url
-
         return TypedResults.Created(longUrl);
     }
 
-    public static async Task<Results<ValidationProblem, Ok, NotFound, BadRequest<string>>> CreateReview(FeedbackDbContext dbContext,
+    public static async Task<Results<ValidationProblem, Ok, NotFound, BadRequest<string>>>
+        CreateReview(SubjectService service,
         IValidator<CreateReviewRequest> Validator,
         IConfiguration configuration,
         CreateReviewRequest request)
 
     {
+
         var validate = Validator.Validate(request);
         if (!validate.IsValid)
         {
             return TypedResults.ValidationProblem(validate.ToDictionary());
         }
 
-        var subject = dbContext.Subjects
-                               .Include(f => f.Reviews)
-                               .FirstOrDefault(x => x.Id == request.SubjectId);
-        if (subject is null)
+
+        try
         {
-            return TypedResults.NotFound();
+            await service.AddReview(request.SubjectId, request.ReviewerName, request.Comment, request.Rate);
+            return TypedResults.Ok();
+        }
+        catch (Exception ex)
+        {
+            return TypedResults.BadRequest(ex.Message);
         }
 
-        if (subject.Locked)
-        {
-            return TypedResults.BadRequest("your subject locked");
-        }
-
-        if (subject.ExpiredOn is not null && subject.ExpiredOn < DateTime.Now)
-        {
-            return TypedResults.BadRequest("your subject expired");
-        }
-
-        subject.AddReview(request.Rate, request.Comment, request.ReviewerName);
-        await dbContext.SaveChangesAsync();
-
-        return TypedResults.Ok();
     }
 
-    public static async Task<Results<NotFound, Ok, BadRequest<string>>> CheckSubjectForReview(FeedbackDbContext dbContext,
+    public static async Task<Results<NotFound, Ok, BadRequest<string>>> CheckSubjectForReview(SubjectService service,
             IConfiguration configuration,
             [FromRoute] int id)
     {
-        var subject = dbContext.Subjects.FirstOrDefault(x => x.Id == id);
-
-        if (subject is null)
+        try
         {
-            return TypedResults.NotFound();
+            await service.CheckSubjectForReview(id);
+            return TypedResults.Ok();
         }
-
-        if(subject.Locked)
+        catch (Exception ex)
         {
-            return TypedResults.BadRequest("your subject locked");
+            return TypedResults.BadRequest(ex.Message);
         }
-
-        if (subject.ExpiredOn is not null && subject.ExpiredOn < DateTime.Now)
-        {
-            return TypedResults.BadRequest("your subject expired");
-        }
-
-        return TypedResults.Ok();
     }
 
     public static async Task<Results<NotFound, Ok<double>>> GetRanking(FeedbackDbContext dbContext,

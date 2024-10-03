@@ -1,6 +1,7 @@
 using Feedback.APIs;
 using Feedback.APIs.Endpoints;
 using Feedback.APIs.Persistence;
+using Feedback.APIs.Services;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
@@ -28,7 +29,7 @@ builder.Services.AddScoped<IUserPrincipal>(sp =>
 });
 
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-
+builder.Services.AddScoped<SubjectService>();
  
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
