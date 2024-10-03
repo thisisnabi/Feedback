@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CA25606E-8EB4-4EC7-8345-ED1653D1D143}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F07D3E36-7E49-4EEF-AAE9-7FFE778241FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Feedback.APIs", "src\Feedback.APIs\Feedback.APIs.csproj", "{B02BB3C1-30FB-439D-A42A-2D0A9B313797}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B02BB3C1-30FB-439D-A42A-2D0A9B313797}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B02BB3C1-30FB-439D-A42A-2D0A9B313797}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B02BB3C1-30FB-439D-A42A-2D0A9B313797}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B02BB3C1-30FB-439D-A42A-2D0A9B313797}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B02BB3C1-30FB-439D-A42A-2D0A9B313797} = {CA25606E-8EB4-4EC7-8345-ED1653D1D143}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5362FF24-36FF-482F-BA14-FCFB150AD50B}
+	EndGlobalSection
+EndGlobal
