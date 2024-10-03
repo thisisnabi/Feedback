@@ -30,18 +30,15 @@ builder.Services.AddScoped<IUserPrincipal>(sp =>
 
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<SubjectService>();
- 
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+app.UseSwagger();
+app.UseSwaggerUI();
+ 
 app.UseHttpsRedirection();
 
 app.MapSubjectEndpoint();
