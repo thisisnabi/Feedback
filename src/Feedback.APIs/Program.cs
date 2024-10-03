@@ -1,11 +1,3 @@
-using Feedback.APIs;
-using Feedback.APIs.Endpoints;
-using Feedback.APIs.Persistence;
-using Feedback.APIs.Services;
-using FluentValidation;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Primitives;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
